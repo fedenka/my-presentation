@@ -1,181 +1,377 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <title>Паттерн Bridge (Мост)</title>
-    <!-- Подключаем Reveal.js из CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&family=Kanit:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        .diagram {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px auto;
-            max-width: 700px;
+        :root {
+            --void: #0A0A0A;
+            --neon-blue: #fffbfb;
+            --neon-purple: #8f4646;
+            --glow: 0 0 15px rgba(0, 240, 255, 0.7);
         }
-        .code-block {
-            background: #3f3f3f;
-            padding: 15px;
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Oxanium', monospace;
+            background-color: var(--void);
+            color: #E0E0E0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(189, 0, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 240, 255, 0.05) 0%, transparent 50%);
+        }
+        
+        .cyber-border {
+            position: fixed;
+            z-index: 1000;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            opacity: 0.7;
+        }
+
+        .card-title {
+        text-align: center;
+        padding-bottom: 1rem;
+        width: 100%;
+        }
+        
+        .cyber-border-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-left {
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100vh;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-right {
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100vh;
+            box-shadow: var(--glow);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+            position: relative;
+        }
+        
+        
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            border-radius: 3px;
+            box-shadow: var(--glow);
+        }
+        
+        
+        .section-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            color: var(--neon-blue);
+            text-align: center;
+            margin: 3rem 0 5rem; /* Было 4rem 0 2rem, теперь 3rem 0 3rem */
+            position: relative;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-blue), transparent);
+            border-radius: 2px;
+            box-shadow: var(--glow);
+        }
+        
+        .presentations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .presentation-card {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 5px;
-            text-align: left;
-            font-size: 0.7em;
-            margin: 20px auto;
-            max-width: 800px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
-        .small-text {
-            font-size: 0.6em;
+        
+        .presentation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.03), rgba(189, 0, 255, 0.03));
+            z-index: -1;
         }
+        
+        .presentation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(232, 228, 223, 0.3);
+            background: rgba(34, 34, 34, 0.8);
+        }
+        
+        .presentation-card:hover .card-title {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(100, 104, 100, 0.836);
+        }
+        
+        .presentation-card:hover .card-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 15px rgba(11, 14, 10, 0.5);
+        }
+        
+        .card-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .card-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        }
+        
+        .card-desc {
+            color: rgba(224, 224, 224, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .card-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+        }
+        
+        .card-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--neon-blue);
+            border-radius: 3px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--neon-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            text-align: center;
+        }
+        
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid;
+            opacity: 0.7;
+        }
+        
+        .corner-tl {
+            top: 10px;
+            left: 10px;
+            border-color: var(--neon-blue) transparent transparent var(--neon-blue);
+            border-radius: 5px 0 0 0;
+        }
+        
+        .corner-tr {
+            top: 10px;
+            right: 10px;
+            border-color: var(--neon-purple) var(--neon-purple) transparent transparent;
+            border-radius: 0 5px 0 0;
+        }
+        
+        .corner-bl {
+            bottom: 10px;
+            left: 10px;
+            border-color: transparent transparent var(--neon-blue) var(--neon-blue);
+            border-radius: 0 0 0 5px;
+        }
+        
+        .corner-br {
+            bottom: 10px;
+            right: 10px;
+            border-color: transparent var(--neon-purple) var(--neon-purple) transparent;
+            border-radius: 0 0 5px 0;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+        }
+        
+        .grid-line-horizontal {
+            width: 100%;
+            height: 1px;
+            left: 0;
+        }
+        
+        .grid-line-vertical {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 3rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+            font-size: 3rem;
+            margin: 2rem 0 3rem;
+            }
+            
+            .presentations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
     </style>
 </head>
 <body>
-    <div class="reveal">
-        <div class="slides">
-            <!-- Слайд 1: Титульный -->
-            <section>
-                <h1>Паттерн Bridge</h1>
-                <h3>Мост</h3>
-                <p>Порождающий шаблон проектирования</p>
-                <p class="small-text">Используйте стрелки ← → для навигации</p>
-            </section>
-
-            <!-- Слайд 2: Определение -->
-            <section>
-                <h2>Что такое Bridge?</h2>
-                <p class="fragment">Разделяет абстракцию и реализацию для независимого изменения</p>
-                <div class="fragment">
-                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/structure.png" width="500" alt="Структура паттерна Bridge">
-                    <p class="small-text">Источник: Refactoring.Guru</p>
+    <div class="cyber-border cyber-border-top"></div>
+    <div class="cyber-border cyber-border-bottom"></div>
+    <div class="cyber-border cyber-border-left"></div>
+    <div class="cyber-border cyber-border-right"></div>
+    
+    <div class="container">
+        <div class="grid-line grid-line-horizontal" style="top: 25%"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 50%"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 75%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 25%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 50%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 75%"></div>
+        
+        
+        <h2 class="section-title" style="margin-top: 1rem; font-size: 3rem;">Design Patterns</h2>
+        
+        <div class="presentations-grid">
+            <div class="presentation-card" onclick="window.location='presentation1/index.html'">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <h2 class="card-title">Observer Pattern</h2>
+                <p class="card-desc">Глубокий анализ структурного шаблона проектирования с примерами реализации на C++ и Python. Уровень доступа: 0x7F3A.</p>
+                <div class="card-btn-container">
+                    <div class="card-btn">Открыть</div>
                 </div>
-            </section>
-
-            <!-- Слайд 3: Проблема -->
-            <section>
-                <h2>Какие проблемы решает?</h2>
-                <ul>
-                    <li class="fragment">Избегает взрывного роста классов</li>
-                    <li class="fragment">Устраняет жесткую привязку абстракции к реализации</li>
-                    <li class="fragment">Позволяет изменять реализацию во время выполнения</li>
-                </ul>
-                <div class="fragment diagram">
-                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/problem-ru.png" width="450" alt="Проблема без Bridge">
+            </div>
+            
+            <div class="presentation-card" onclick="window.location='presentation2/index.html'">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <h2 class="card-title">Straregy Pattern</h2>
+                <p class="card-desc">Современные подходы к проектированию нейросетевых структур. Включая квантовые нейросети. Уровень доступа: 0x9D2B.</p>
+                <div class="card-btn-container">
+                    <div class="card-btn">Открыть</div>
                 </div>
-            </section>
-
-            <!-- Слайд 4: Решение -->
-            <section>
-                <h2>Как работает Bridge?</h2>
-                <div class="diagram">
-                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/solution-ru.png" width="500" alt="Решение с Bridge">
-                </div>
-                <p class="fragment">Абстракция содержит ссылку на реализацию</p>
-            </section>
-
-            <!-- Слайд 5: Диаграмма классов -->
-            <section>
-                <h2>Диаграмма классов</h2>
-                <div class="diagram">
-                    <img src="https://sourcemaking.com/files/v2/content/patterns/Bridge.png" width="600" alt="Диаграмма классов">
-                </div>
-                <div class="fragment">
-                    <p>Abstraction - высокоуровневая логика</p>
-                    <p>Implementation - низкоуровневая реализация</p>
-                </div>
-            </section>
-
-            <!-- Слайд 6: Пример кода -->
-            <section>
-                <h2>Пример на TypeScript</h2>
-                <div class="code-block">
-                    <pre><code class="typescript" data-trim>
-// Implementation
-interface Device {
-    isEnabled(): boolean;
-    enable(): void;
-    disable(): void;
-}
-
-class Tv implements Device {
-    private power = false;
-
-    isEnabled() { return this.power; }
-    enable() { this.power = true; }
-    disable() { this.power = false; }
-}
-
-// Abstraction
-class RemoteControl {
-    constructor(protected device: Device) {}
-
-    togglePower() {
-        this.device.isEnabled()
-            ? this.device.disable()
-            : this.device.enable();
-    }
-}
-                    </code></pre>
-                </div>
-            </section>
-
-            <!-- Слайд 7: Преимущества -->
-            <section>
-                <h2>Преимущества</h2>
-                <ul>
-                    <li class="fragment">Принцип единой ответственности</li>
-                    <li class="fragment">Принцип открытости/закрытости</li>
-                    <li class="fragment">Упрощает поддержку кода</li>
-                    <li class="fragment">Позволяет создавать платформо-независимые программы</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 8: Недостатки -->
-            <section>
-                <h2>Ограничения</h2>
-                <ul>
-                    <li class="fragment">Усложняет архитектуру</li>
-                    <li class="fragment">Не всегда очевидна необходимость</li>
-                    <li class="fragment">Избыточен для простых случаев</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 9: Применение -->
-            <section>
-                <h2>Где применяется?</h2>
-                <ul>
-                    <li class="fragment">Графические интерфейсы (разные ОС)</li>
-                    <li class="fragment">Драйверы устройств</li>
-                    <li class="fragment">Кросс-платформенные приложения</li>
-                    <li class="fragment">Когда возможны разные реализации одного функционала</li>
-                </ul>
-            </section>
-
-            <!-- Слайд 10: Итоги -->
-            <section>
-                <h2>Ключевые моменты</h2>
-                <ul>
-                    <li class="fragment">Разделяет абстракцию и реализацию</li>
-                    <li class="fragment">Снижает связанность компонентов</li>
-                    <li class="fragment">Упрощает расширение функционала</li>
-                    <li class="fragment">Особенно полезен для сложных систем</li>
-                </ul>
-                <div class="fragment" style="margin-top: 50px;">
-                    <p>Вопросы?</p>
-                    <p class="small-text">Дополнительные материалы: Refactoring.Guru, SourceMaking</p>
-                </div>
-            </section>
+            </div>
         </div>
     </div>
 
-    <!-- Подключаем Reveal.js из CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
     <script>
-        Reveal.initialize({
-            hash: true,
-            plugins: [RevealHighlight],
-            slideNumber: 'c/t',
-            transition: 'convex'
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            const horizontalLines = document.querySelectorAll('.grid-line-horizontal');
+            const verticalLines = document.querySelectorAll('.grid-line-vertical');
+            
+            horizontalLines.forEach((line, i) => {
+                line.style.transform = `translateY(${y * 20 - 10}px)`;
+            });
+            
+            verticalLines.forEach((line, i) => {
+                line.style.transform = `translateX(${x * 20 - 10}px)`;
+            });
+        });
+        
+        // Анимация загрузки карточек
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.presentation-card');
+            cards.forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.5, 1, 0.89, 1), transform 0.6s cubic-bezier(0.5, 1, 0.89, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 * i);
+            });
         });
     </script>
 </body>
