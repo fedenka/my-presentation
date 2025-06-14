@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Паттерн Bridge (Мост)</title>
+    <!-- Подключаем Reveal.js из CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    <style>
+        .diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 700px;
+        }
+        .code-block {
+            background: #3f3f3f;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 0.7em;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .small-text {
+            font-size: 0.6em;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Слайд 1: Титульный -->
+            <section>
+                <h1>Паттерн Bridge</h1>
+                <h3>Мост</h3>
+                <p>Порождающий шаблон проектирования</p>
+                <p class="small-text">Используйте стрелки ← → для навигации</p>
+            </section>
+
+            <!-- Слайд 2: Определение -->
+            <section>
+                <h2>Что такое Bridge?</h2>
+                <p class="fragment">Разделяет абстракцию и реализацию для независимого изменения</p>
+                <div class="fragment">
+                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/structure.png" width="500" alt="Структура паттерна Bridge">
+                    <p class="small-text">Источник: Refactoring.Guru</p>
+                </div>
+            </section>
+
+            <!-- Слайд 3: Проблема -->
+            <section>
+                <h2>Какие проблемы решает?</h2>
+                <ul>
+                    <li class="fragment">Избегает взрывного роста классов</li>
+                    <li class="fragment">Устраняет жесткую привязку абстракции к реализации</li>
+                    <li class="fragment">Позволяет изменять реализацию во время выполнения</li>
+                </ul>
+                <div class="fragment diagram">
+                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/problem-ru.png" width="450" alt="Проблема без Bridge">
+                </div>
+            </section>
+
+            <!-- Слайд 4: Решение -->
+            <section>
+                <h2>Как работает Bridge?</h2>
+                <div class="diagram">
+                    <img src="https://refactoring.guru/images/patterns/diagrams/bridge/solution-ru.png" width="500" alt="Решение с Bridge">
+                </div>
+                <p class="fragment">Абстракция содержит ссылку на реализацию</p>
+            </section>
+
+            <!-- Слайд 5: Диаграмма классов -->
+            <section>
+                <h2>Диаграмма классов</h2>
+                <div class="diagram">
+                    <img src="https://sourcemaking.com/files/v2/content/patterns/Bridge.png" width="600" alt="Диаграмма классов">
+                </div>
+                <div class="fragment">
+                    <p>Abstraction - высокоуровневая логика</p>
+                    <p>Implementation - низкоуровневая реализация</p>
+                </div>
+            </section>
+
+            <!-- Слайд 6: Пример кода -->
+            <section>
+                <h2>Пример на TypeScript</h2>
+                <div class="code-block">
+                    <pre><code class="typescript" data-trim>
+// Implementation
+interface Device {
+    isEnabled(): boolean;
+    enable(): void;
+    disable(): void;
+}
+
+class Tv implements Device {
+    private power = false;
+
+    isEnabled() { return this.power; }
+    enable() { this.power = true; }
+    disable() { this.power = false; }
+}
+
+// Abstraction
+class RemoteControl {
+    constructor(protected device: Device) {}
+
+    togglePower() {
+        this.device.isEnabled()
+            ? this.device.disable()
+            : this.device.enable();
+    }
+}
+                    </code></pre>
+                </div>
+            </section>
+
+            <!-- Слайд 7: Преимущества -->
+            <section>
+                <h2>Преимущества</h2>
+                <ul>
+                    <li class="fragment">Принцип единой ответственности</li>
+                    <li class="fragment">Принцип открытости/закрытости</li>
+                    <li class="fragment">Упрощает поддержку кода</li>
+                    <li class="fragment">Позволяет создавать платформо-независимые программы</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 8: Недостатки -->
+            <section>
+                <h2>Ограничения</h2>
+                <ul>
+                    <li class="fragment">Усложняет архитектуру</li>
+                    <li class="fragment">Не всегда очевидна необходимость</li>
+                    <li class="fragment">Избыточен для простых случаев</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 9: Применение -->
+            <section>
+                <h2>Где применяется?</h2>
+                <ul>
+                    <li class="fragment">Графические интерфейсы (разные ОС)</li>
+                    <li class="fragment">Драйверы устройств</li>
+                    <li class="fragment">Кросс-платформенные приложения</li>
+                    <li class="fragment">Когда возможны разные реализации одного функционала</li>
+                </ul>
+            </section>
+
+            <!-- Слайд 10: Итоги -->
+            <section>
+                <h2>Ключевые моменты</h2>
+                <ul>
+                    <li class="fragment">Разделяет абстракцию и реализацию</li>
+                    <li class="fragment">Снижает связанность компонентов</li>
+                    <li class="fragment">Упрощает расширение функционала</li>
+                    <li class="fragment">Особенно полезен для сложных систем</li>
+                </ul>
+                <div class="fragment" style="margin-top: 50px;">
+                    <p>Вопросы?</p>
+                    <p class="small-text">Дополнительные материалы: Refactoring.Guru, SourceMaking</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Подключаем Reveal.js из CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            plugins: [RevealHighlight],
+            slideNumber: 'c/t',
+            transition: 'convex'
+        });
+    </script>
+</body>
+</html>
