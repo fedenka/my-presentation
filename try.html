@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&family=Kanit:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --void: #0A0A0A;
+            --neon-blue: #fffbfb;
+            --neon-purple: #8f4646;
+            --glow: 0 0 15px rgba(0, 240, 255, 0.7);
+            --fire-color-1: #ff3a00;
+            --fire-color-2: #ff7b00;
+            --fire-color-3: #ffb300;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Oxanium', monospace;
+            background-color: var(--void);
+            color: #E0E0E0;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(189, 0, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 240, 255, 0.05) 0%, transparent 50%);
+        }
+        
+        .cyber-border {
+            position: fixed;
+            z-index: 1000;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            opacity: 0.7;
+        }
+
+        .card-title {
+        text-align: center;
+        padding-bottom: 1rem;
+        width: 100%;
+        }
+        
+        .cyber-border-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-left {
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100vh;
+            box-shadow: var(--glow);
+        }
+        
+        .cyber-border-right {
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100vh;
+            box-shadow: var(--glow);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+            position: relative;
+        }
+        
+        /* Стиль для огненного заголовка */
+        .fire-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            text-align: center;
+            margin: 3rem 0 5rem;
+            position: relative;
+            background: linear-gradient(to right, 
+                var(--fire-color-1), 
+                var(--fire-color-2), 
+                var(--fire-color-3),
+                var(--fire-color-2),
+                var(--fire-color-1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: fireEffect 3s linear infinite;
+            text-shadow: 0 0 10px rgba(255, 59, 0, 0.3);
+        }
+        
+        .fire-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(to right, 
+                var(--fire-color-1), 
+                var(--fire-color-2), 
+                var(--fire-color-3));
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(255, 59, 0, 0.5);
+            animation: fireLine 3s linear infinite;
+        }
+        
+        @keyframes fireEffect {
+            0% {
+                background-position: 0% center;
+                text-shadow: 0 0 10px rgba(255, 59, 0, 0.3),
+                              0 0 20px rgba(255, 123, 0, 0.2);
+            }
+            50% {
+                background-position: 100% center;
+                text-shadow: 0 0 15px rgba(255, 59, 0, 0.5),
+                              0 0 25px rgba(255, 123, 0, 0.3);
+            }
+            100% {
+                background-position: 0% center;
+                text-shadow: 0 0 10px rgba(255, 59, 0, 0.3),
+                              0 0 20px rgba(255, 123, 0, 0.2);
+            }
+        }
+        
+        @keyframes fireLine {
+            0% { opacity: 0.7; width: 150px; }
+            50% { opacity: 1; width: 180px; }
+            100% { opacity: 0.7; width: 150px; }
+        }
+        
+        /* Остальные стили остаются без изменений */
+        .presentations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .presentation-card {
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        /* ... остальные стили без изменений ... */
+
+    </style>
+</head>
+<body>
+    <div class="cyber-border cyber-border-top"></div>
+    <div class="cyber-border cyber-border-bottom"></div>
+    <div class="cyber-border cyber-border-left"></div>
+    <div class="cyber-border cyber-border-right"></div>
+    
+    <div class="container">
+        <div class="grid-line grid-line-horizontal" style="top: 25%"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 50%"></div>
+        <div class="grid-line grid-line-horizontal" style="top: 75%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 25%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 50%"></div>
+        <div class="grid-line grid-line-vertical" style="left: 75%"></div>
+        
+        <h2 class="fire-title">DESIGN PATTERNS</h2>
+        
+        <div class="presentations-grid">
+            <div class="presentation-card" onclick="window.location='presentation1/index.html'">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <h2 class="card-title">Observer Pattern</h2>
+                <p class="card-desc">Глубокий анализ структурного шаблона проектирования с примерами реализации на C++ и Python. Уровень доступа: 0x7F3A.</p>
+                <div class="card-btn-container">
+                    <div class="card-btn">Открыть</div>
+                </div>
+            </div>
+            
+            <div class="presentation-card" onclick="window.location='presentation2/index.html'">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <h2 class="card-title">Straregy Pattern</h2>
+                <p class="card-desc">Современные подходы к проектированию нейросетевых структур. Включая квантовые нейросети. Уровень доступа: 0x9D2B.</p>
+                <div class="card-btn-container">
+                    <div class="card-btn">Открыть</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            const horizontalLines = document.querySelectorAll('.grid-line-horizontal');
+            const verticalLines = document.querySelectorAll('.grid-line-vertical');
+            
+            horizontalLines.forEach((line, i) => {
+                line.style.transform = `translateY(${y * 20 - 10}px)`;
+            });
+            
+            verticalLines.forEach((line, i) => {
+                line.style.transform = `translateX(${x * 20 - 10}px)`;
+            });
+        });
+        
+        // Анимация загрузки карточек
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.presentation-card');
+            cards.forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.5, 1, 0.89, 1), transform 0.6s cubic-bezier(0.5, 1, 0.89, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 * i);
+            });
+            
+            // Добавляем эффект усиления огня при наведении
+            const fireTitle = document.querySelector('.fire-title');
+            fireTitle.addEventListener('mouseenter', () => {
+                fireTitle.style.animation = 'fireEffect 1.5s linear infinite';
+                fireTitle.style.textShadow = '0 0 15px rgba(255, 59, 0, 0.5), 0 0 30px rgba(255, 123, 0, 0.4)';
+            });
+            
+            fireTitle.addEventListener('mouseleave', () => {
+                fireTitle.style.animation = 'fireEffect 3s linear infinite';
+                fireTitle.style.textShadow = '0 0 10px rgba(255, 59, 0, 0.3), 0 0 20px rgba(255, 123, 0, 0.2)';
+            });
+        });
+    </script>
+</body>
+</html>
