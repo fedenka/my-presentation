@@ -26,7 +26,6 @@
             cursor: none !important;
         }
 
-
         :root {
             --void: #0A0A0A;
             --neon-blue: #fffbfb;
@@ -104,7 +103,6 @@
             position: relative;
         }
         
-        
         .title::after {
             content: '';
             position: absolute;
@@ -117,33 +115,20 @@
             border-radius: 3px;
             box-shadow: var(--glow);
         }
-        
+
         
         .section-title {
             font-family: 'Kanit', sans-serif;
             font-size: 3rem;
             font-weight: 700;
-            text-transform: uppercase;
             letter-spacing: 0.2rem;
             color: var(--neon-blue);
             text-align: center;
-            margin: 3rem 0 5rem; /* Было 4rem 0 2rem, теперь 3rem 0 3rem */
+            margin: 3rem 0 5rem;
             position: relative;
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
         
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-blue), transparent);
-            border-radius: 2px;
-            box-shadow: var(--glow);
-        }
         
         .presentations-grid {
             display: grid;
@@ -296,6 +281,23 @@
             height: 100%;
             top: 0;
         }
+
+        /* Стили для эффекта пишущей машинки */
+        .typewriter {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .typewriter::after {
+            content: "|";
+            animation: blink 1.3s step-end infinite;
+            color: var(--neon-blue);
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -315,7 +317,6 @@
                 grid-template-columns: 1fr;
             }
         }
-        
     </style>
 </head>
 <body>
@@ -332,8 +333,9 @@
         <div class="grid-line grid-line-vertical" style="left: 50%"></div>
         <div class="grid-line grid-line-vertical" style="left: 75%"></div>
         
-        
-        <h2 class="section-title" style="margin-top: 1rem; font-size: 3rem;">Design Patterns</h2>
+        <h2 class="section-title" style="margin-top: 1rem; font-size: 3rem;">
+            <span class="typewriter" id="typewriter-text"></span>
+        </h2>
         
         <div class="presentations-grid">
             <div class="presentation-card" onclick="window.location='presentation1/index.html'">
@@ -365,49 +367,86 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        const cursor = document.createElement('div');
-        cursor.className = 'custom-cursor';
-        document.body.appendChild(cursor);
+        // Эффект бесконечной пишущей машинки с удалением
+        const typewriterText = document.getElementById('typewriter-text');
+        const text = "print('GoF Design Patterns')";
+        let isDeleting = false;
+        let i = 0;
+        let typingSpeed = 180;
+        let pauseBeforeDelete = 3000; // Пауза перед удалением (2 секунды)
+        let pauseBeforeType = 650; // Пауза перед новым набором (0.5 секунды)
         
-        cursor.style.left = '50%';
-        cursor.style.top = '50%';
-        cursor.style.transform = 'translate(-50%, -50%)';
-
-        document.addEventListener('mousemove', function(e) {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
+        function typeWriter() {
+            const currentText = typewriterText.textContent;
             
-            cursor.style.left = (mouseX - 16) + 'px';
-            cursor.style.top = (mouseY - 16) + 'px';
+            if (!isDeleting && i < text.length) {
+                // Печатаем текст
+                typewriterText.textContent = text.substring(0, i + 1);
+                i++;
+                setTimeout(typeWriter, typingSpeed);
+            } else if (!isDeleting && i === text.length) {
+                // Текст напечатан, ждем и начинаем удалять
+                isDeleting = true;
+                setTimeout(typeWriter, pauseBeforeDelete);
+            } else if (isDeleting && currentText.length > 0) {
+                // Удаляем текст
+                typewriterText.textContent = currentText.substring(0, currentText.length - 1);
+                setTimeout(typeWriter, typingSpeed / 2); // Удаляем быстрее чем печатаем
+            } else if (isDeleting && currentText.length === 0) {
+                // Текст удален, ждем и начинаем печатать снова
+                isDeleting = false;
+                i = 0;
+                setTimeout(typeWriter, pauseBeforeType);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запускаем эффект пишущей машинки
+            setTimeout(typeWriter, 1000); // Задержка перед началом печати
             
-        });
+            // Кастомный курсор
+            const cursor = document.createElement('div');
+            cursor.className = 'custom-cursor';
+            document.body.appendChild(cursor);
+            
+            cursor.style.left = '50%';
+            cursor.style.top = '50%';
+            cursor.style.transform = 'translate(-50%, -50%)';
 
-
-        const interactive = document.querySelectorAll('a, button, .presentation-card');
-        interactive.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(1.5) rotate(15deg)';
-                cursor.style.filter = 'drop-shadow(0 0 3px rgba(0, 0, 0,0.9))';
+            document.addEventListener('mousemove', function(e) {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                cursor.style.left = (mouseX - 16) + 'px';
+                cursor.style.top = (mouseY - 16) + 'px';
             });
-            el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1) rotate(0)';
-                cursor.style.filter = 'drop-shadow(0 0 4px rgba(18, 18, 6,0.5))';
+
+            // Эффекты при наведении на интерактивные элементы
+            const interactive = document.querySelectorAll('a, button, .presentation-card');
+            interactive.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.5) rotate(15deg)';
+                    cursor.style.filter = 'drop-shadow(0 0 3px rgba(0, 0, 0,0.9))';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1) rotate(0)';
+                    cursor.style.filter = 'drop-shadow(0 0 4px rgba(18, 18, 6,0.5))';
+                });
+            });
+
+            // Анимация появления карточек
+            const cards = document.querySelectorAll('.presentation-card');
+            cards.forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s cubic-bezier(0.5, 1, 0.89, 1), transform 0.6s cubic-bezier(0.5, 1, 0.89, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 * i);
             });
         });
-
-        const cards = document.querySelectorAll('.presentation-card');
-        cards.forEach((card, i) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            
-            setTimeout(() => {
-                card.style.transition = 'opacity 0.6s cubic-bezier(0.5, 1, 0.89, 1), transform 0.6s cubic-bezier(0.5, 1, 0.89, 1)';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 200 * i);
-        });
-    });
     </script>
 </body>
 </html>

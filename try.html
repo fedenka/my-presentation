@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&family=Kanit:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        .custom-cursor {
+            position: fixed;
+            width: 35px;
+            height: 35px;
+            pointer-events: none;
+            z-index: 9999;
+            background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" transform="matrix(-1, 0, 0, 1, 0, 0)"><path style="fill:%23D68400;" d="M435,179V154H410v25.2V205v25H435v25h26v-26H435z"/><path style="fill:%23964B00;" d="M154,435.2V461h25v-25.8H154z M230,410v25.2V461h26v-25.2H230z"/><path style="fill:%23ffffff;" d="M384,128v-26h-25.6h-25.6h-25.6h-25.6H256v26h-26v26h-25v25.2V205h-25.8h-25.6H128h-26v25H77v26H51 v25.6v25.6v25.6V358h26v26h25v26h26h25.6h25.6h25.6h25.6H256h26v-26h25.2H333v-26h25v-25.2v-25.6V282h26v-26h26v-25.6v-25.6v-25.6 v-25.6V128H384z M358,179h-25v-25h25V179z"/></svg>');
+            background-size: contain;
+            transform: translate(-50%, -50%);
+            transform-origin: center center;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0 0 6px rgba(6, 2, 17, 0.7));
+            z-index: 10000;
+            left: 0;
+            top: 0;
+        }
+
+        html, body, a, button, .presentation-card {
+            cursor: none !important;
+        }
+
         :root {
             --void: #0A0A0A;
             --neon-blue: #fffbfb;
             --neon-purple: #8f4646;
             --glow: 0 0 15px rgba(0, 240, 255, 0.7);
-            --fire-color-1: #ff3a00;
-            --fire-color-2: #ff7b00;
-            --fire-color-3: #ffb300;
         }
         
         * {
@@ -85,72 +103,33 @@
             position: relative;
         }
         
-        /* Стиль для огненного заголовка */
-        .fire-title {
-            font-family: 'Kanit', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.2rem;
-            text-align: center;
-            margin: 3rem 0 5rem;
-            position: relative;
-            background: linear-gradient(to right, 
-                var(--fire-color-1), 
-                var(--fire-color-2), 
-                var(--fire-color-3),
-                var(--fire-color-2),
-                var(--fire-color-1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% auto;
-            animation: fireEffect 3s linear infinite;
-            text-shadow: 0 0 10px rgba(255, 59, 0, 0.3);
-        }
-        
-        .fire-title::after {
+        .title::after {
             content: '';
             position: absolute;
             bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 150px;
+            width: 200px;
             height: 3px;
-            background: linear-gradient(to right, 
-                var(--fire-color-1), 
-                var(--fire-color-2), 
-                var(--fire-color-3));
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
             border-radius: 3px;
-            box-shadow: 0 0 10px rgba(255, 59, 0, 0.5);
-            animation: fireLine 3s linear infinite;
+            box-shadow: var(--glow);
+        }
+
+        
+        .section-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 0.2rem;
+            color: var(--neon-blue);
+            text-align: center;
+            margin: 3rem 0 5rem;
+            position: relative;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
         
-        @keyframes fireEffect {
-            0% {
-                background-position: 0% center;
-                text-shadow: 0 0 10px rgba(255, 59, 0, 0.3),
-                              0 0 20px rgba(255, 123, 0, 0.2);
-            }
-            50% {
-                background-position: 100% center;
-                text-shadow: 0 0 15px rgba(255, 59, 0, 0.5),
-                              0 0 25px rgba(255, 123, 0, 0.3);
-            }
-            100% {
-                background-position: 0% center;
-                text-shadow: 0 0 10px rgba(255, 59, 0, 0.3),
-                              0 0 20px rgba(255, 123, 0, 0.2);
-            }
-        }
         
-        @keyframes fireLine {
-            0% { opacity: 0.7; width: 150px; }
-            50% { opacity: 1; width: 180px; }
-            100% { opacity: 0.7; width: 150px; }
-        }
-        
-        /* Остальные стили остаются без изменений */
         .presentations-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -174,8 +153,170 @@
             height: 100%;
         }
         
-        /* ... остальные стили без изменений ... */
+        .presentation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.03), rgba(189, 0, 255, 0.03));
+            z-index: -1;
+        }
+        
+        .presentation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(232, 228, 223, 0.3);
+            background: rgba(34, 34, 34, 0.8);
+        }
+        
+        .presentation-card:hover .card-title {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(100, 104, 100, 0.836);
+        }
+        
+        .presentation-card:hover .card-btn {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            box-shadow: 0 0 15px rgba(11, 14, 10, 0.5);
+        }
+        
+        .card-title {
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .card-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        }
+        
+        .card-desc {
+            color: rgba(224, 224, 224, 0.7);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            flex-grow: 1;
+            text-align: center;
+        }
+        
+        .card-btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+        }
+        
+        .card-btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--neon-blue);
+            border-radius: 3px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid var(--neon-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+            text-align: center;
+        }
+        
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid;
+            opacity: 0.7;
+        }
+        
+        .corner-tl {
+            top: 10px;
+            left: 10px;
+            border-color: var(--neon-blue) transparent transparent var(--neon-blue);
+            border-radius: 5px 0 0 0;
+        }
+        
+        .corner-tr {
+            top: 10px;
+            right: 10px;
+            border-color: var(--neon-purple) var(--neon-purple) transparent transparent;
+            border-radius: 0 5px 0 0;
+        }
+        
+        .corner-bl {
+            bottom: 10px;
+            left: 10px;
+            border-color: transparent transparent var(--neon-blue) var(--neon-blue);
+            border-radius: 0 0 0 5px;
+        }
+        
+        .corner-br {
+            bottom: 10px;
+            right: 10px;
+            border-color: transparent var(--neon-purple) var(--neon-purple) transparent;
+            border-radius: 0 0 5px 0;
+        }
+        
+        .grid-line {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+        }
+        
+        .grid-line-horizontal {
+            width: 100%;
+            height: 1px;
+            left: 0;
+        }
+        
+        .grid-line-vertical {
+            width: 1px;
+            height: 100%;
+            top: 0;
+        }
 
+        /* Стили для эффекта пишущей машинки */
+        .typewriter {
+            display: inline-block;
+            position: relative;
+        }
+        
+        .typewriter::after {
+            content: "|";
+            animation: blink 1.3s step-end infinite;
+            color: var(--neon-blue);
+        }
+        
+        @keyframes blink {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 3rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+            font-size: 3rem;
+            margin: 2rem 0 3rem;
+            }
+            
+            .presentations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -192,7 +333,9 @@
         <div class="grid-line grid-line-vertical" style="left: 50%"></div>
         <div class="grid-line grid-line-vertical" style="left: 75%"></div>
         
-        <h2 class="fire-title">DESIGN PATTERNS</h2>
+        <h2 class="section-title" style="margin-top: 1rem; font-size: 3rem;">
+            <span class="typewriter" id="typewriter-text"></span>
+        </h2>
         
         <div class="presentations-grid">
             <div class="presentation-card" onclick="window.location='presentation1/index.html'">
@@ -224,24 +367,74 @@
     </div>
 
     <script>
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            const horizontalLines = document.querySelectorAll('.grid-line-horizontal');
-            const verticalLines = document.querySelectorAll('.grid-line-vertical');
-            
-            horizontalLines.forEach((line, i) => {
-                line.style.transform = `translateY(${y * 20 - 10}px)`;
-            });
-            
-            verticalLines.forEach((line, i) => {
-                line.style.transform = `translateX(${x * 20 - 10}px)`;
-            });
-        });
+        // Эффект бесконечной пишущей машинки с удалением
+        const typewriterText = document.getElementById('typewriter-text');
+        const text = "print('GoF Design Patterns')";
+        let isDeleting = false;
+        let i = 0;
+        let typingSpeed = 180;
+        let pauseBeforeDelete = 3000; // Пауза перед удалением (2 секунды)
+        let pauseBeforeType = 650; // Пауза перед новым набором (0.5 секунды)
         
-        // Анимация загрузки карточек
-        document.addEventListener('DOMContentLoaded', () => {
+        function typeWriter() {
+            const currentText = typewriterText.textContent;
+            
+            if (!isDeleting && i < text.length) {
+                // Печатаем текст
+                typewriterText.textContent = text.substring(0, i + 1);
+                i++;
+                setTimeout(typeWriter, typingSpeed);
+            } else if (!isDeleting && i === text.length) {
+                // Текст напечатан, ждем и начинаем удалять
+                isDeleting = true;
+                setTimeout(typeWriter, pauseBeforeDelete);
+            } else if (isDeleting && currentText.length > 0) {
+                // Удаляем текст
+                typewriterText.textContent = currentText.substring(0, currentText.length - 1);
+                setTimeout(typeWriter, typingSpeed / 2); // Удаляем быстрее чем печатаем
+            } else if (isDeleting && currentText.length === 0) {
+                // Текст удален, ждем и начинаем печатать снова
+                isDeleting = false;
+                i = 0;
+                setTimeout(typeWriter, pauseBeforeType);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запускаем эффект пишущей машинки
+            setTimeout(typeWriter, 1000); // Задержка перед началом печати
+            
+            // Кастомный курсор
+            const cursor = document.createElement('div');
+            cursor.className = 'custom-cursor';
+            document.body.appendChild(cursor);
+            
+            cursor.style.left = '50%';
+            cursor.style.top = '50%';
+            cursor.style.transform = 'translate(-50%, -50%)';
+
+            document.addEventListener('mousemove', function(e) {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                cursor.style.left = (mouseX - 16) + 'px';
+                cursor.style.top = (mouseY - 16) + 'px';
+            });
+
+            // Эффекты при наведении на интерактивные элементы
+            const interactive = document.querySelectorAll('a, button, .presentation-card');
+            interactive.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.5) rotate(15deg)';
+                    cursor.style.filter = 'drop-shadow(0 0 3px rgba(0, 0, 0,0.9))';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1) rotate(0)';
+                    cursor.style.filter = 'drop-shadow(0 0 4px rgba(18, 18, 6,0.5))';
+                });
+            });
+
+            // Анимация появления карточек
             const cards = document.querySelectorAll('.presentation-card');
             cards.forEach((card, i) => {
                 card.style.opacity = '0';
@@ -252,18 +445,6 @@
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
                 }, 200 * i);
-            });
-            
-            // Добавляем эффект усиления огня при наведении
-            const fireTitle = document.querySelector('.fire-title');
-            fireTitle.addEventListener('mouseenter', () => {
-                fireTitle.style.animation = 'fireEffect 1.5s linear infinite';
-                fireTitle.style.textShadow = '0 0 15px rgba(255, 59, 0, 0.5), 0 0 30px rgba(255, 123, 0, 0.4)';
-            });
-            
-            fireTitle.addEventListener('mouseleave', () => {
-                fireTitle.style.animation = 'fireEffect 3s linear infinite';
-                fireTitle.style.textShadow = '0 0 10px rgba(255, 59, 0, 0.3), 0 0 20px rgba(255, 123, 0, 0.2)';
             });
         });
     </script>
